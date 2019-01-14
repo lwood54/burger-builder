@@ -38,7 +38,6 @@ const withErrorHandler = (WrappedComponent, axios) => {
         };
 
         render() {
-            console.log(this.errorConfirmedHandler);
             return (
                 <Aux>
                     <Modal

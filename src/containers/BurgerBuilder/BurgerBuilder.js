@@ -104,31 +104,52 @@ class BurgerBuilder extends Component {
     };
 
     purchaseContinueHandler = () => {
-        this.setState({ loading: true });
-        const order = {
-            ingredients: this.state.ingredients,
-            // for security, in real app, you would want to calculate price on server so
-            // the customer could not manipulate the price
-            price: this.state.totalPrice,
-            customer: {
-                name: 'Logan Wood',
-                address: {
-                    street: 'Teststreet 1',
-                    zipCode: '76123',
-                    country: 'United State'
-                },
-                email: 'test@test.com'
-            },
-            deliveryMethod: 'fastest'
-        };
-        axios
-            .post('/orders.json', order)
-            .then(response => {
-                this.setState({ loading: false, purchasing: false });
-            })
-            .catch(error => {
-                this.setState({ loading: false, purchasing: false });
-            });
+        // this.setState({ loading: true });
+        // const order = {
+        //     ingredients: this.state.ingredients,
+        //     // for security, in real app, you would want to calculate price on server so
+        //     // the customer could not manipulate the price
+        //     price: this.state.totalPrice,
+        //     customer: {
+        //         name: 'Logan Wood',
+        //         address: {
+        //             street: 'Teststreet 1',
+        //             zipCode: '76123',
+        //             country: 'United State'
+        //         },
+        //         email: 'test@test.com'
+        //     },
+        //     deliveryMethod: 'fastest'
+        // };
+        // axios
+        //     .post('/orders.json', order)
+        //     .then(response => {
+        //         this.setState({ loading: false, purchasing: false });
+        //     })
+        //     .catch(error => {
+        //         this.setState({ loading: false, purchasing: false });
+        //     });
+        const queryParams = [];
+        for (let i in this.state.ingredients) {
+            queryParams.push(
+                encodeURIComponent(i) +
+                    '=' +
+                    encodeURIComponent(this.state.ingredients[i])
+            );
+        }
+        /////////////// ALTERNATE, I think better, or at least makes more sense, WAY ////////////
+        // state: { ...this.state } // NOTE: Passing state here instead of using a query string seems WAY less complicated to me
+        // he isn't doing it this way, I'm just wondering if there is some performance reason as to why.
+
+        // YET ANOTHER ALTERNATE WAY to pass state, whatever object is passed
+        // in the 2nd argument below will be sent as state to the next component
+        // this.props.history.push('/checkout', { ...this.state });
+
+        const queryString = queryParams.join('&');
+        this.props.history.push({
+            pathname: '/checkout',
+            search: '?' + queryString
+        });
     };
 
     render() {
@@ -184,7 +205,7 @@ class BurgerBuilder extends Component {
                     show={this.state.purchasing}
                     modalClosed={this.purchaseCancelHandler}
                 >
-                    {orderSummary}hi
+                    {orderSummary}
                 </Modal>
                 {burger}
             </Aux>
